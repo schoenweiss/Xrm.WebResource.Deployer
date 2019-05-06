@@ -8,7 +8,7 @@ namespace Xrm.WebResource.Deployer
     [ TabCompletion ]
     public class CmdArgs
     {
-        [ ArgRequired, ArgDescription( "Connection string to CRM system" ) ]
+        [ ArgRequired, ArgDescription( "Connection string to the CRM system" ) ]
         public string ConnectionString { get; set; }
 
         [ ArgRequired, ArgDescription( "Specify path to package.xml" ) ]
@@ -25,5 +25,11 @@ namespace Xrm.WebResource.Deployer
 
         [ ArgDescription( "If set to True: Updates, creates and publisches all available webresources" ), DefaultValue( false ) ]
         public bool PublishAll { get; set; }
+
+        [ ArgDescription( "Generates a new package.xml file from given path to web resource folder" ), DefaultValue( false ) ]
+        public bool Generate { get; set; }
+
+        [ ArgDescription( "Source folder for package.xml generation" ) ]
+        public bool SourceFolder { get; set; }
     }
 }
