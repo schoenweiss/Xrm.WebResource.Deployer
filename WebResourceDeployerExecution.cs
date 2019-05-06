@@ -26,7 +26,7 @@ namespace Xrm.WebResource.Deployer
         /// <summary>
         /// Helper
         /// </summary>
-        [ HelpHook, ArgShortcut( "-?" ), ArgDescription( "Shows this help" ) ]
+        [ HelpHook, ArgShortcut( "-?" ), ArgDescription( "Shows help" ) ]
         // ReSharper disable once UnusedMember.Global
         public bool Help { get; set; }
 
@@ -35,7 +35,7 @@ namespace Xrm.WebResource.Deployer
         /// Deployer
         /// </summary>
         /// <param name="args"></param>
-        [ ArgActionMethod, ArgDescription( "Deploy webResource which was defined" ) ]
+        [ ArgActionMethod, ArgDescription( "Deploy web resource(s)" ) ]
         // ReSharper disable once UnusedMember.Global
         public void Deploy( CmdArgs args )
         {
@@ -57,7 +57,7 @@ namespace Xrm.WebResource.Deployer
             }
             catch( Exception ex )
             {
-                log.Info( $"Exception occured, terminating. Message: {ex.Message}", ex );
+                err.Error( $"Exception occured, terminating. Message: {ex.Message}", ex );
             }
         }
     }
