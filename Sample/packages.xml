@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<UtilityRoot>
+  <Packages>
+    <Package name="Web/Dependencies/" rootPath="C:\Repositories\Xrm.WebRessource.Deployer\Sample\out" isNamePrefix="true">
+      <WebResourceInfo name="jQuery/jquery.min.js" filePath="\Dependencies\jQuery\jquery.min.js" displayName="jquery.min.js" type="js" description="" />
+    </Package>
+    <Package name="Web/Forms/" rootPath="C:\Repositories\Xrm.WebRessource.Deployer\Sample\out" isNamePrefix="true">
+      <WebResourceInfo name="Account.js" filePath="\Forms\Account.js" displayName="Account.js" type="js" description="" />
+    </Package>
+    <Package name="Web/Images/" rootPath="C:\Repositories\Xrm.WebRessource.Deployer\Sample\out" isNamePrefix="true">
+      <WebResourceInfo name="ApplicationRibbon/work.png" filePath="\Images\ApplicationRibbon\work.png" displayName="work.png" type="png" description="" />
+    </Package>
+  </Packages>
+</UtilityRoot>
