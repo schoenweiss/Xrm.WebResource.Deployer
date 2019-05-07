@@ -11,7 +11,7 @@ namespace Xrm.WebResource.Deployer.Entities
     /// </summary>
     [System.Runtime.Serialization.DataContractAttribute()]
     [Microsoft.Xrm.Sdk.Client.EntityLogicalNameAttribute("webresource")]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Xrm.WebResource.Deployer.DevTool.BackEndEarlyBind", "1.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Xrm.WebResource.Deployer", "1.0")]
     public partial class WebResource : Microsoft.Xrm.Sdk.Entity, System.ComponentModel.INotifyPropertyChanging, System.ComponentModel.INotifyPropertyChanged
     {
 

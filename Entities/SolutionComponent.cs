@@ -4,14 +4,14 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Xrm.PluginDeployer.Entities
+namespace Xrm.WebResource.Deployer.Entities
 {
     /// <summary>
     /// A component of a CRM solution.
     /// </summary>
     [System.Runtime.Serialization.DataContractAttribute()]
     [Microsoft.Xrm.Sdk.Client.EntityLogicalNameAttribute("solutioncomponent")]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Xrm.PluginDeployer.DevTool.BackEndEarlyBind", "1.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Xrm.WebResource.Deployer", "1.0")]
     public partial class SolutionComponent : Microsoft.Xrm.Sdk.Entity, System.ComponentModel.INotifyPropertyChanging, System.ComponentModel.INotifyPropertyChanged
     {
 
@@ -113,18 +113,18 @@ namespace Xrm.PluginDeployer.Entities
         /// <summary>
         /// IsMetadata as Enum
         /// </summary>
-        public System.Nullable<Xrm.PluginDeployer.Entities.SolutionComponent.OptionSet.IsThisComponentMetadata> IsMetadataAsEnum
+        public System.Nullable<Xrm.WebResource.Deployer.Entities.SolutionComponent.OptionSet.IsThisComponentMetadata> IsMetadataAsEnum
         {
             get
             {
                 if (!IsMetadata.HasValue) return null;
-                if (IsMetadata.Value) return Xrm.PluginDeployer.Entities.SolutionComponent.OptionSet.IsThisComponentMetadata.Metadata;
-                return Xrm.PluginDeployer.Entities.SolutionComponent.OptionSet.IsThisComponentMetadata.Data;
+                if (IsMetadata.Value) return Xrm.WebResource.Deployer.Entities.SolutionComponent.OptionSet.IsThisComponentMetadata.Metadata;
+                return Xrm.WebResource.Deployer.Entities.SolutionComponent.OptionSet.IsThisComponentMetadata.Data;
             }
             set
             {
                 if (!value.HasValue) this.SetAttributeValue("ismetadata", null);
-                if (value.Value == Xrm.PluginDeployer.Entities.SolutionComponent.OptionSet.IsThisComponentMetadata.Metadata)
+                if (value.Value == Xrm.WebResource.Deployer.Entities.SolutionComponent.OptionSet.IsThisComponentMetadata.Metadata)
                 {
                     this.SetAttributeValue("ismetadata", true);
                 }
@@ -577,6 +577,24 @@ namespace Xrm.PluginDeployer.Entities
         /// <summary/>
         public class Ref
         {
+        }
+    }
+
+    /// <summary>
+    /// Represents a source of entities bound to a CRM service. It tracks and manages changes made to the retrieved entities.
+    /// </summary>
+    public partial class CrmContext : Microsoft.Xrm.Sdk.Client.OrganizationServiceContext
+    {
+
+        /// <summary>
+        /// Gets a binding to the set of all <see cref="Xrm.WebResource.Deployer.Entities.SolutionComponent"/> entities.
+        /// </summary>
+        public System.Linq.IQueryable<Xrm.WebResource.Deployer.Entities.SolutionComponent> SolutionComponentSet
+        {
+            get
+            {
+                return this.CreateQuery<Xrm.WebResource.Deployer.Entities.SolutionComponent>();
+            }
         }
     }
 }

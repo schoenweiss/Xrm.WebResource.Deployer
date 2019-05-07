@@ -11,7 +11,7 @@ namespace Xrm.WebResource.Deployer.Entities
     /// </summary>
     [System.Runtime.Serialization.DataContractAttribute()]
     [Microsoft.Xrm.Sdk.Client.EntityLogicalNameAttribute("publisher")]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Xrm.WebResource.Deployer.DevTool.BackEndEarlyBind", "1.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Xrm.WebResource.Deployer", "1.0")]
     public partial class Publisher : Microsoft.Xrm.Sdk.Entity, System.ComponentModel.INotifyPropertyChanging, System.ComponentModel.INotifyPropertyChanged
     {
 
@@ -1415,6 +1415,24 @@ namespace Xrm.WebResource.Deployer.Entities
         /// <summary/>
         public class Ref
         {
+        }
+    }
+
+    /// <summary>
+    /// Represents a source of entities bound to a CRM service. It tracks and manages changes made to the retrieved entities.
+    /// </summary>
+    public partial class CrmContext : Microsoft.Xrm.Sdk.Client.OrganizationServiceContext
+    {
+
+        /// <summary>
+        /// Gets a binding to the set of all <see cref="Xrm.WebResource.Deployer.Entities.Publisher"/> entities.
+        /// </summary>
+        public System.Linq.IQueryable<Xrm.WebResource.Deployer.Entities.Publisher> PublisherSet
+        {
+            get
+            {
+                return this.CreateQuery<Xrm.WebResource.Deployer.Entities.Publisher>();
+            }
         }
     }
 }

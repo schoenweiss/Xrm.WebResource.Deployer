@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Management.Instrumentation;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
 using log4net;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Client;
-using Xrm.PluginDeployer.Entities;
+using Xrm.WebResource.Deployer.Entities;
 
 namespace Xrm.WebResource.Deployer.Publisher
 {
@@ -133,12 +134,13 @@ namespace Xrm.WebResource.Deployer.Publisher
         public IEnumerable< Entities.WebResource > RetrieveWebResourcesForActiveSolution( )
         {
             var context = new OrganizationServiceContext( Service );
+
             var webResources = from wr in context.CreateQuery< Entities.WebResource >( )
                 join sc in context.CreateQuery< SolutionComponent >( )
                     on wr.WebResourceId equals sc.ObjectId
                 where wr.IsManaged == false
-                where wr.IsCustomizable.Value == true
-                where sc.ComponentType.Value == ( int ) componenttype.WebResource
+                where wr.IsCustomizable.Value
+                where sc.ComponentType.Value == ( int ) SolutionComponent.OptionSet.ComponentType.WebResource
                 where sc.SolutionId.Id == crud.ActiveSolution.SolutionId.Value
                 select new Entities.WebResource
                 {

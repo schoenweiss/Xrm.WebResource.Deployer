@@ -1,13 +1,13 @@
-﻿using System;
-using System.Collections.ObjectModel;
-using System.IO;
-using System.Linq;
-using System.Xml.Linq;
-using log4net;
+﻿using log4net;
 using Microsoft.Crm.Sdk.Messages;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Client;
 using Microsoft.Xrm.Sdk.Query;
+using System;
+using System.Collections.ObjectModel;
+using System.IO;
+using System.Linq;
+using System.Xml.Linq;
 using Xrm.WebResource.Deployer.Entities;
 using Xrm.WebResource.Deployer.Utility;
 
@@ -68,9 +68,11 @@ namespace Xrm.WebResource.Deployer.Publisher
         private void SetActivePublisher( OrganizationServiceContext context )
         {
             if( ActiveSolution == null )
+            {
                 return;
+            }
 
-            var pub = from p in context.CreateQuery< Entities.Publisher >( )
+            var pub = from p in context.CreateQuery<Entities.Publisher>( )
                 where p.PublisherId.Value == ActiveSolution.PublisherId.Id
                 select new Entities.Publisher
                 {
@@ -122,7 +124,7 @@ namespace Xrm.WebResource.Deployer.Publisher
                     var scRequest =
                         new AddSolutionComponentRequest
                         {
-                            ComponentType = ( int ) componenttype.WebResource,
+                            ComponentType = ( int ) SolutionComponent.OptionSet.ComponentType.WebResource,
                             SolutionUniqueName = ActiveSolution.UniqueName,
                             ComponentId = guid
                         };
