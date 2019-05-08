@@ -6,9 +6,12 @@ using System.Management.Instrumentation;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
 using log4net;
+using Microsoft.Crm.Sdk.Messages;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Client;
+using Microsoft.Xrm.Sdk.Query;
 using Xrm.WebResource.Deployer.Entities;
+using eWebResource = Xrm.WebResource.Deployer.Entities.WebResource;
 
 namespace Xrm.WebResource.Deployer.Publisher
 {
@@ -90,7 +93,7 @@ namespace Xrm.WebResource.Deployer.Publisher
             var type = descendant?.Attribute( WebResource.Type )?.Value;
 
             var webResourceFullName = packageName + wrName;
-            var localFullName = rootPath + filePath.Replace( "\\", "/" );
+            var localFullName = (rootPath + filePath).Replace( "\\", "/" );
 
             var webresourceInfo =
                 new XElement( WebResource.WebResourceInfo,
@@ -131,28 +134,50 @@ namespace Xrm.WebResource.Deployer.Publisher
             }
         }
 
-        public IEnumerable< Entities.WebResource > RetrieveWebResourcesForActiveSolution( )
+        public IEnumerable< eWebResource > RetrieveWebResourcesForActiveSolution( )
         {
-            var context = new OrganizationServiceContext( Service );
-
-            var webResources = from wr in context.CreateQuery< Entities.WebResource >( )
-                join sc in context.CreateQuery< SolutionComponent >( )
-                    on wr.WebResourceId equals sc.ObjectId
-                where wr.IsManaged == false
-                where wr.IsCustomizable.Value
-                where sc.ComponentType.Value == ( int ) SolutionComponent.OptionSet.ComponentType.WebResource
-                where sc.SolutionId.Id == crud.ActiveSolution.SolutionId.Value
-                select new Entities.WebResource
+            var query = new QueryExpression
+            {
+                EntityName = eWebResource.EntityLogicalName,
+                ColumnSet =
+                    new ColumnSet(
+                        eWebResource.PropertyNames.Content,
+                        eWebResource.PropertyNames.Name,
+                        eWebResource.PropertyNames.WebResourceType,
+                        eWebResource.PropertyNames.DisplayName,
+                        eWebResource.PropertyNames.Description,
+                        eWebResource.PropertyNames.WebResourceId
+                        ),
+                NoLock = true,
+                Criteria = new FilterExpression
                 {
-                    WebResourceType = wr.WebResourceType,
-                    WebResourceId = wr.WebResourceId,
-                    DisplayName = wr.DisplayName,
-                    Name = wr.Name,
-                    Content = wr.Content,
-                    Description = wr.Description
-                };
+                    FilterOperator = LogicalOperator.And,
+                    Conditions =
+                    {
+                        new ConditionExpression(eWebResource.PropertyNames.IsManaged,
+                            ConditionOperator.Equal,
+                            false),
+                        new ConditionExpression(eWebResource.PropertyNames.IsCustomizable,
+                            ConditionOperator.Equal,
+                            true)
+                    }
+                }
+            };
 
-            return webResources.AsEnumerable( );
+            var link = query.AddLink(SolutionComponent.EntityLogicalName, eWebResource.PropertyNames.WebResourceId, SolutionComponent.PropertyNames.ObjectId);
+            link.LinkCriteria.AddCondition(
+                SolutionComponent.PropertyNames.ComponentType,
+                ConditionOperator.Equal,
+                (int)SolutionComponent.OptionSet.ComponentType.WebResource);
+            link.LinkCriteria.AddCondition(
+                SolutionComponent.PropertyNames.SolutionId,
+                ConditionOperator.Equal,
+                crud.ActiveSolution.SolutionId.Value);
+
+
+            var fetchDefinitions = Service.RetrieveMultiple(query);
+          
+            return fetchDefinitions.Entities.Select(webR => webR.ToEntity<eWebResource>());
         }
 
         private bool IsWebResourceNameValid( string name )

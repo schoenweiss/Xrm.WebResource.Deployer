@@ -43,7 +43,7 @@ namespace Xrm.WebResource.Deployer.Publisher
                 ColumnSet = new ColumnSet( true ),
                 Criteria = new FilterExpression( )
             };
-            queryUnmanagedSolutions.Criteria.AddCondition( "ismanaged", ConditionOperator.Equal, false );
+            queryUnmanagedSolutions.Criteria.AddCondition(Solution.PropertyNames.IsManaged, ConditionOperator.Equal, false );
             var querySolutionResults = service.RetrieveMultiple( queryUnmanagedSolutions );
 
             if( querySolutionResults.Entities.Count > 0 )
@@ -52,7 +52,7 @@ namespace Xrm.WebResource.Deployer.Publisher
                 //where Type=Unmanaged returns 3 solutions. The CRM UI of a 
                 //vanilla instance shows only 1 unmanaged solution: "Default". 
                 //Assume "Active" and "Basic" should not be touched?
-                UnmanagedSolutions = new ObservableCollection< Solution >( querySolutionResults.Entities.Select( x => x as Solution ).Where( s => s.UniqueName == "Default" ) );
+                UnmanagedSolutions = new ObservableCollection< Solution >( querySolutionResults.Entities.Select( x => x.ToEntity<Solution>() ).Where( s => s?.UniqueName == "Default" ) );
 
                 //If only 1 solution returns just go ahead and default it.
                 if( UnmanagedSolutions.Count == 1 && UnmanagedSolutions[ 0 ].UniqueName == "Default" )
@@ -72,14 +72,24 @@ namespace Xrm.WebResource.Deployer.Publisher
                 return;
             }
 
-            var pub = from p in context.CreateQuery<Entities.Publisher>( )
-                where p.PublisherId.Value == ActiveSolution.PublisherId.Id
-                select new Entities.Publisher
+            var fetchDefinitions = Service.RetrieveMultiple(new QueryExpression
+            {
+                EntityName = Entities.Publisher.EntityLogicalName,
+                ColumnSet = new ColumnSet(Entities.Publisher.PropertyNames.CustomizationPrefix),
+                NoLock = true,
+                Criteria = new FilterExpression
                 {
-                    CustomizationPrefix = p.CustomizationPrefix
-                };
+                    FilterOperator = LogicalOperator.And,
+                    Conditions =
+                    {
+                        new ConditionExpression(Entities.Publisher.PropertyNames.PublisherId,
+                            ConditionOperator.Equal,
+                            ActiveSolution.PublisherId.Id)
+                    }
+                }
+            });
 
-            ActivePublisher = pub.First( );
+            ActivePublisher = fetchDefinitions.Entities.First().ToEntity<Entities.Publisher>();
         }
 
         /// <summary>
