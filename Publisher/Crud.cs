@@ -21,7 +21,7 @@ namespace Xrm.WebResource.Deployer.Publisher
         public Solution ActiveSolution { get; set; }
         public Entities.Publisher ActivePublisher { get; set; }
         private Solution SelectedSolution { get; set; }
-        private ObservableCollection< Solution > UnmanagedSolutions { get; set; }
+        private ObservableCollection<Solution> UnmanagedSolutions { get; set; }
 
 
         /// <summary>
@@ -30,7 +30,7 @@ namespace Xrm.WebResource.Deployer.Publisher
         /// <param name="service"></param>
         /// <param name="log"></param>
         /// <param name="err"></param>
-        public Crud( IOrganizationService service, ILog log, ILog err )
+        public Crud(IOrganizationService service, ILog log, ILog err)
         {
             this.err = err;
             Service = service;
@@ -40,34 +40,34 @@ namespace Xrm.WebResource.Deployer.Publisher
             var queryUnmanagedSolutions = new QueryExpression
             {
                 EntityName = Solution.EntityLogicalName,
-                ColumnSet = new ColumnSet( true ),
-                Criteria = new FilterExpression( )
+                ColumnSet = new ColumnSet(true),
+                Criteria = new FilterExpression()
             };
-            queryUnmanagedSolutions.Criteria.AddCondition(Solution.PropertyNames.IsManaged, ConditionOperator.Equal, false );
-            var querySolutionResults = service.RetrieveMultiple( queryUnmanagedSolutions );
+            queryUnmanagedSolutions.Criteria.AddCondition(Solution.PropertyNames.IsManaged, ConditionOperator.Equal, false);
+            var querySolutionResults = service.RetrieveMultiple(queryUnmanagedSolutions);
 
-            if( querySolutionResults.Entities.Count > 0 )
+            if (querySolutionResults.Entities.Count > 0)
             {
                 //The Where() is important because a query for all solutions
                 //where Type=Unmanaged returns 3 solutions. The CRM UI of a 
                 //vanilla instance shows only 1 unmanaged solution: "Default". 
                 //Assume "Active" and "Basic" should not be touched?
-                UnmanagedSolutions = new ObservableCollection< Solution >( querySolutionResults.Entities.Select( x => x.ToEntity<Solution>() ).Where( s => s?.UniqueName == "Default" ) );
+                UnmanagedSolutions = new ObservableCollection<Solution>(querySolutionResults.Entities.Select(x => x.ToEntity<Solution>()).Where(s => s?.UniqueName == "Default"));
 
                 //If only 1 solution returns just go ahead and default it.
-                if( UnmanagedSolutions.Count == 1 && UnmanagedSolutions[ 0 ].UniqueName == "Default" )
+                if (UnmanagedSolutions.Count == 1 && UnmanagedSolutions[0].UniqueName == "Default")
                 {
-                    SelectedSolution = UnmanagedSolutions[ 0 ];
+                    SelectedSolution = UnmanagedSolutions[0];
                     ActiveSolution = SelectedSolution;
 
-                    SetActivePublisher( new OrganizationServiceContext( service ) );
+                    SetActivePublisher(new OrganizationServiceContext(service));
                 }
             }
         }
 
-        private void SetActivePublisher( OrganizationServiceContext context )
+        private void SetActivePublisher(OrganizationServiceContext context)
         {
-            if( ActiveSolution == null )
+            if (ActiveSolution == null)
             {
                 return;
             }
@@ -96,61 +96,55 @@ namespace Xrm.WebResource.Deployer.Publisher
         /// Create a new webressource
         /// </summary>
         /// <param name="webResourceInfo"></param>
-        public void Create( XElement webResourceInfo )
+        public Guid? Create(XElement webResourceInfo)
         {
             try
             {
                 var type =
-                    ( int ) ResourceExtensions.ConvertStringExtension( webResourceInfo?.Attribute( WebResource.Type )?.Value );
-                var optionsetValue = new OptionSetValue( type );
-                var fullName = GetWebResourceFullNameIncludingPrefix( webResourceInfo );
+                    (int) ResourceExtensions.ConvertStringExtension(webResourceInfo?.Attribute(WebResource.Type)?.Value);
+                var optionsetValue = new OptionSetValue(type);
+                var fullName = GetWebResourceFullNameIncludingPrefix(webResourceInfo);
                 //Create the Web Resource.
                 var wr = new Entities.WebResource
                 {
-                    Content = GetEncodedFileContents( webResourceInfo?.Attribute( WebResource.FilePath )?.Value ),
-                    DisplayName = webResourceInfo?.Attribute( WebResource.DisplayName )?.Value,
-                    Description = webResourceInfo?.Attribute( WebResource.Description )?.Value,
+                    Content = GetEncodedFileContents(webResourceInfo?.Attribute(WebResource.FilePath)?.Value),
+                    DisplayName = webResourceInfo?.Attribute(WebResource.DisplayName)?.Value,
+                    Description = webResourceInfo?.Attribute(WebResource.Description)?.Value,
                     LogicalName = Entities.WebResource.EntityLogicalName,
                     Name = fullName,
                     WebResourceType = optionsetValue
                 };
 
-
-                //Special cases attributes for different web resource types.
-                switch( wr.WebResourceType.Value )
-                {
-                    case ( int ) ResourceExtensions.WebResourceType.Silverlight:
-                        wr.SilverlightVersion = "4.0";
-                        break;
-                }
-
-                var guid = Service.Create( wr );
+                var guid = Service.Create(wr);
 
                 //If not the "Default Solution", create a SolutionComponent to assure it gets
                 //associated with the ActiveSolution. Web Resources are automatically added
                 //as SolutionComponents to the Default Solution.
-                if( ActiveSolution.UniqueName != "Default" )
+                if (ActiveSolution.UniqueName != "Default")
                 {
                     var scRequest =
                         new AddSolutionComponentRequest
                         {
-                            ComponentType = ( int ) SolutionComponent.OptionSet.ComponentType.WebResource,
+                            ComponentType = (int) SolutionComponent.OptionSet.ComponentType.WebResource,
                             SolutionUniqueName = ActiveSolution.UniqueName,
                             ComponentId = guid
                         };
-                    Service.Execute( scRequest );
+                    Service.Execute(scRequest);
                 }
+
+                return guid;
             }
-            catch( Exception e )
+            catch (Exception e)
             {
-                err.Error( "Error: " + e.Message );
+                err.Error("Error: " + e.Message);
+                return null;
             }
         }
 
-        private string GetWebResourceFullNameIncludingPrefix( XElement webResourceInfo )
+        private string GetWebResourceFullNameIncludingPrefix(XElement webResourceInfo)
         {
             var name = ActivePublisher.CustomizationPrefix + "_/";
-            name += webResourceInfo?.Attribute( WebResource.Name )?.Value;
+            name += webResourceInfo?.Attribute(WebResource.Name)?.Value;
             return name;
         }
 
@@ -159,34 +153,34 @@ namespace Xrm.WebResource.Deployer.Publisher
         /// </summary>
         /// <param name="webResourceInfo"></param>
         /// <param name="existingResource"></param>
-        public void Update( XElement webResourceInfo, Entities.WebResource existingResource )
+        public void Update(XElement webResourceInfo, Entities.WebResource existingResource)
         {
             try
             {
-                var fullName = GetWebResourceFullNameIncludingPrefix( webResourceInfo );
+                var fullName = GetWebResourceFullNameIncludingPrefix(webResourceInfo);
                 var wr = new Entities.WebResource
                 {
-                    Content = GetEncodedFileContents( webResourceInfo?.Attribute( WebResource.FilePath )?.Value ),
-                    DisplayName = webResourceInfo?.Attribute( WebResource.DisplayName )?.Value,
-                    Description = webResourceInfo?.Attribute( WebResource.Description )?.Value,
+                    Content = GetEncodedFileContents(webResourceInfo?.Attribute(WebResource.FilePath)?.Value),
+                    DisplayName = webResourceInfo?.Attribute(WebResource.DisplayName)?.Value,
+                    Description = webResourceInfo?.Attribute(WebResource.Description)?.Value,
                     Name = fullName,
                     WebResourceId = existingResource.WebResourceId
                 };
-                Service.Update( wr );
+                Service.Update(wr);
             }
-            catch( Exception e )
+            catch (Exception e)
             {
-                err.Error( "Error: " + e.Message );
+                err.Error("Error: " + e.Message);
             }
         }
 
-        private static string GetEncodedFileContents( string pathToFile )
+        private static string GetEncodedFileContents(string pathToFile)
         {
-            FileStream fs = new FileStream( pathToFile, FileMode.Open, FileAccess.Read );
-            byte[] binaryData = new byte[ fs.Length ];
-            fs.Read( binaryData, 0, ( int ) fs.Length );
-            fs.Close( );
-            return Convert.ToBase64String( binaryData, 0, binaryData.Length );
+            FileStream fs = new FileStream(pathToFile, FileMode.Open, FileAccess.Read);
+            byte[] binaryData = new byte[fs.Length];
+            fs.Read(binaryData, 0, (int) fs.Length);
+            fs.Close();
+            return Convert.ToBase64String(binaryData, 0, binaryData.Length);
         }
 
     }

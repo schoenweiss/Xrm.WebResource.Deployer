@@ -27,6 +27,7 @@ namespace Xrm.WebResource.Deployer.Utility
             {
                 extensionValue = extensionValue.Remove(0, 1);
             }
+
             switch (extensionValue.ToLower())
             {
                 case "css":

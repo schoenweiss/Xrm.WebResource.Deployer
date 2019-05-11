@@ -12,10 +12,10 @@ namespace Xrm.WebResource.Deployer
         /// Runner
         /// </summary>
         /// <param name="args"></param>
-        public static void Main( string[] args )
+        public static void Main(string[] args)
         {
-            Args.InvokeAction< WebResourceDeployerExecution >( args );
-            Environment.Exit( 0 );
+            Args.InvokeAction<WebResourceDeployerExecution>(args);
+            Environment.Exit(0);
         }
     }
 }

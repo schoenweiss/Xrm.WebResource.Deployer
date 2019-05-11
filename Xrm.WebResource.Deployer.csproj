@@ -84,6 +84,7 @@
     <Compile Include="Entities\Solution.cs" />
     <Compile Include="Entities\SolutionComponent.cs" />
     <Compile Include="Entities\WebResource.cs" />
+    <Compile Include="PackageGenerator.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="CmdArgs.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
