@@ -38,7 +38,7 @@ Xrm.WebResource.Deployer.exe Deploy -C "connectionString" -P "pathTo\packages.xm
 ```Bash
 Xrm.WebResource.Deployer.exe Deploy -C "connectionString" -P "pathTo\packages.xml" -Pu true
 ```
-4. Generate a new package.xml file from given source folder
+4. Generate a new package.xml file from given source folder (not implemented yet)
 ```Bash
 Xrm.WebResource.Deployer.exe Generate -S "pathTo\project"
 ```
