@@ -31,5 +31,8 @@ namespace Xrm.WebResource.Deployer
     {
         [ArgDescription("Absolute path to source folder for package.xml generation"), DefaultValue("")]
         public string SourceFolder { get; set; }
+
+        [ArgDescription("Prefix for web resource deployment on folder structure"), DefaultValue("")]
+        public string DeployPrefix { get; set; }
     }
 }

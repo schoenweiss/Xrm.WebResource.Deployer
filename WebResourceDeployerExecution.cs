@@ -84,7 +84,7 @@ namespace Xrm.WebResource.Deployer
                     Environment.Exit(1);
                 }
 
-                var generator = new PackageGenerator(args, log, err);
+                var generator = new PackageGenerator(args, log);
                 action(generator);
             }
             catch (Exception ex)
