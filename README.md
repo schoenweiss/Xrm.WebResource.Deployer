@@ -4,13 +4,13 @@ This tool simplifies the deployment for single, multiple or all available suppor
 ## Options
 
     Usage - Xrm.WebResource.Deployer <action> -options
-
     GlobalOption   Description
     Help (-?)      Shows help
 
     Actions
     
     Deploy -options - Deploy web resource(s)
+
         Option                   Description
         ConnectionString* (-C)   Connection string to the CRM system
         PackagesXml* (-P)        Specify path to package.xml
@@ -20,10 +20,12 @@ This tool simplifies the deployment for single, multiple or all available suppor
         PackageName (-Pa)        Package name, which will be updated and published. e.g. 'Entities\'
         PublishAll (-Pu)         If set to True: Updates, creates and publisches all available webresources
                                  [Default='False']
-
+                                 
     Generate -options - Generates a new package.xml file from given source folder
+
         Option              Description
         SourceFolder (-S)   Absolute path to source folder for package.xml generation [Default='']
+        DeployPrefix (-D)   Prefix for web resource deployment on folder structure [Default='']
 
 ## Scenarios
 1. Deploy a single web resource to the called CRM system
@@ -40,5 +42,5 @@ Xrm.WebResource.Deployer.exe Deploy -C "connectionString" -P "pathTo\packages.xm
 ```
 4. Generate a new package.xml file from given source folder (not implemented yet)
 ```Bash
-Xrm.WebResource.Deployer.exe Generate -S "pathTo\project"
+Xrm.WebResource.Deployer.exe Generate -S "pathTo\project" -D "Web"
 ```
